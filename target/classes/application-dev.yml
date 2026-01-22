@@ -1,6 +1,0 @@
-#spring:
-#  datasource:
-#    # MySql
-#    url: jdbc:mysql://localhost:3306/school_information?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=Asia/Shanghai
-#    username: root
-#    password: '%Zheng7219212'
