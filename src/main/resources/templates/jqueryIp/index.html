@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>检测ip和地区</title>
+	</head>
+	<script src="./js/jquery.min.js"></script>
+	<script src="js/getCity.js"></script>
+	<style type="text/css">
+		.box{text-align: center;}
+	</style>
+	<body>
+		<div class="box">
+			<h1>AJAX检测ip和地区</h1>
+			<p id="city"></p>
+			<p id="ip"></p>
+		</div>
+	</body>
+</html>
+
+<!-- <script type="text/javascript">
+$(function(){
+	//获取城市ajax
+	$.ajax({
+	url: 'http://api.map.baidu.com/location/ip?ak=BMXS3lDH7kKVzDdH55nP5OzgOM1NECCl',  
+	type: 'POST',  
+	dataType: 'jsonp',
+	success:function(data) {  
+		console.log(JSON.stringify(data.content.address_detail.province + "," + data.content.address_detail.city));
+		$('#city').html(JSON.stringify(data.content.address_detail.province + "," + data.content.address_detail.city))
+	}
+	});
+	//获取ip ajax
+	$.ajax({
+	    url: 'http://ip-api.com/json',
+	    success: function(data){
+	       console.log(JSON.stringify(data.query));
+	       $('#ip').html(JSON.stringify(data.query))
+	    },
+	    type: 'GET',
+	    dataType: 'JSON'
+	});
+})
+
+</script> -->

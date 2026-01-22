@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>登录</title>
+    <link href="./jqueryIp/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <style>
+        html{
+            height: 100vh;
+            background: url("./images/downloaded-image.png") no-repeat;
+            background-size: cover;
+        }
+        body{
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="text-center">用户登录</h4>
+                </div>
+                <div class="card-body">
+                    <div id="loginForm">
+                        <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+                        <div id="successMessage" class="alert alert-success" style="display: none;"></div>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">密码</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
+                            <label class="form-check-label" for="remember-me">记住我</label>
+                        </div>
+
+                        <button type="button" id="loginBtn" class="btn btn-primary w-100">登录</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./jqueryIp/js/jquery.min.js"></script>
+<script th:inline="javascript">
+    // 获取CSRF token
+    const csrfToken = /*[[${_csrf.token}]]*/ '';
+    const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+
+    // 获取URL参数
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error')) {
+        document.getElementById('errorMessage').textContent = '用户名或密码错误！';
+        document.getElementById('errorMessage').style.display = 'block';
+    }
+    if (urlParams.get('logout')) {
+        document.getElementById('successMessage').textContent = '您已成功退出登录！';
+        document.getElementById('successMessage').style.display = 'block';
+    }
+
+    // 登录按钮点击事件
+    document.getElementById('loginBtn').addEventListener('click', async function() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const rememberMe = document.getElementById('remember-me').checked;
+
+        // 验证输入
+        if (!username || !password) {
+            showError('请输入用户名和密码！');
+            return;
+        }
+
+        // 显示加载状态
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = true;
+        btn.textContent = '登录中...';
+
+        try {
+            // 使用 FormData 或 URLSearchParams 发送数据
+            const formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('password', password);
+            if (rememberMe) {
+                formData.append('remember-me', 'on');
+            }
+
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    [csrfHeader]: csrfToken
+                },
+                body: formData.toString(),
+                credentials: 'same-origin' // 包含cookies
+            });
+
+            if (response.ok) {
+                // 登录成功，跳转到目标页面
+                const redirectUrl = response.redirected ? response.url : '/';
+                window.location.href = redirectUrl;
+            } else if (response.status === 401) {
+                // 认证失败
+                showError('用户名或密码错误！');
+                btn.disabled = false;
+                btn.textContent = '登录';
+            } else {
+                // 其他错误
+                showError('登录失败，请稍后重试！');
+                btn.disabled = false;
+                btn.textContent = '登录';
+            }
+        } catch (error) {
+            console.error('登录错误:', error);
+            showError('网络错误，请检查连接！');
+            btn.disabled = false;
+            btn.textContent = '登录';
+        }
+    });
+
+    // 回车键登录
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('loginBtn').click();
+        }
+    });
+
+    // 显示错误信息
+    function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        document.getElementById('successMessage').style.display = 'none';
+    }
+</script>
+</body>
+</html>

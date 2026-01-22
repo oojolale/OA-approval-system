@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>控制台</title>
+    <link href="./jqueryIp/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">Spring Security 6</a>
+        <div class="navbar-nav">
+            <a class="nav-link" th:href="@{/}">首页</a>
+            <a class="nav-link active" th:href="@{/dashboard}">控制台</a>
+            <a class="nav-link" th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">管理员</a>
+            <a class="nav-link" th:href="@{/user}" sec:authorize="hasAnyRole('USER','ADMIN')">用户页面</a>
+            <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" class="d-inline">
+                <button type="submit" class="btn btn-link nav-link">退出</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>欢迎来到控制台</h3>
+                </div>
+                <div class="card-body">
+                    <div sec:authorize="isAuthenticated()">
+                        <h4>用户信息</h4>
+                        <p><strong>用户名:</strong> <span sec:authentication="name"></span></p>
+                        <p><strong>角色:</strong> <span sec:authentication="principal.authorities"></span></p>
+                        <p><strong>登录时间:</strong> <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6" sec:authorize="hasRole('ADMIN')">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">管理员功能</h5>
+                                    <p class="card-text">您拥有管理员权限，可以访问所有管理功能。</p>
+                                    <a th:href="@{/admin}" class="btn btn-light">进入管理面板</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" sec:authorize="hasAnyRole('USER', 'ADMIN')">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">用户功能</h5>
+                                    <p class="card-text">您可以访问用户专属功能。</p>
+                                    <a th:href="@{/user}" class="btn btn-light">进入用户页面</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>快速链接</h5>
+                        <div class="btn-group">
+                            <a th:href="@{/}" class="btn btn-outline-secondary">返回首页</a>
+                            <a th:href="@{/api/hello}" class="btn btn-outline-info">测试 API</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

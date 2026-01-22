@@ -1,0 +1,25 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />  
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+    <title>Baidu Map </title>  
+    <style type="text/css">  
+        #container{height:80vh;width:90vw;margin: 15px auto;}  
+    </style>  
+</head>  
+<body>
+	<div id="container"></div>
+</body>
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=1.0&type=webgl&ak=BMXS3lDH7kKVzDdH55nP5OzgOM1NECCl"></script>
+  <script type="text/javascript">
+	  var map = new BMapGL.Map("container");         // 创建地图实例
+	  var point = new BMapGL.Point(localStorage.getItem("location1"),localStorage.getItem("location2"));  // 创建点坐标
+	  map.centerAndZoom(point, 15);                 // 初始化地图，设置中心点坐标和地图级别
+	  map.enableScrollWheelZoom();     //开启鼠标滚轮缩放
+	  map.setHeading(64.5);   //设置地图旋转角度
+	  map.setTilt(73);       //设置地图的倾斜角度
+	  var marker = new BMapGL.Marker(point);        // 创建标注   
+	  map.addOverlay(marker);                     // 将标注添加到地图中
+  </script>
+</html>

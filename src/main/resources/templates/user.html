@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>用户页面</title>
+    <link href="./jqueryIp/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">Spring Security 6</a>
+        <div class="navbar-nav">
+            <a class="nav-link" th:href="@{/}">首页</a>
+            <a class="nav-link" th:href="@{/dashboard}">控制台</a>
+            <a class="nav-link" th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">管理员</a>
+            <a class="nav-link active" th:href="@{/user}">用户页面</a>
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-link nav-link">退出</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3>用户页面</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>欢迎！</strong> 此页面所有认证用户都可以访问。
+                    </div>
+
+                    <h4>用户功能</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">个人资料</h5>
+                                    <p class="card-text">查看和编辑您的个人信息。</p>
+                                    <button class="btn btn-primary">编辑资料</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">我的设置</h5>
+                                    <p class="card-text">管理您的个人设置和偏好。</p>
+                                    <button class="btn btn-primary">个人设置</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>当前用户信息</h5>
+                        <p><strong>用户名:</strong> <span sec:authentication="name"></span></p>
+                        <p><strong>角色:</strong> <span sec:authentication="principal.authorities"></span></p>
+                    </div>
+
+                    <div class="mt-3">
+                        <a th:href="@{/dashboard}" class="btn btn-secondary">返回控制台</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
