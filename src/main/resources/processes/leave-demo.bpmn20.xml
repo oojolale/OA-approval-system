@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns:flowable="http://flowable.org/bpmn"
+                  targetNamespace="http://example.com/oa">
+    <bpmn:process id="leave_demo" name="请假审批Demo" isExecutable="true">
+        <bpmn:startEvent id="start" name="开始"/>
+        <bpmn:sequenceFlow id="flow1" sourceRef="start" targetRef="managerApprove"/>
+        <bpmn:userTask id="managerApprove" name="经理审批" flowable:assignee="manager1"/>
+        <bpmn:sequenceFlow id="flow2" sourceRef="managerApprove" targetRef="end"/>
+        <bpmn:endEvent id="end" name="结束"/>
+    </bpmn:process>
+</bpmn:definitions>

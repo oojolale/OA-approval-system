@@ -1,12 +1,21 @@
-#数据源配置
+server:
+  port: 8080
+  address: 0.0.0.0
 spring:
 #  profiles:
 #    active: @profilesActive@
+  #数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/base?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=Asia/Shanghai
     username: root
     password: '%Zheng7219212'
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
   web:
     resources:
       static-locations:
@@ -38,6 +47,10 @@ spring:
       mail-smtp-socketFactory-fallback: false
       mail-transport-protocol: smtp
 
+flowable:
+  database-schema-update: true
+  async-executor-activate: false
+
 file:
   base-directory: /usr/share/nginx/static/files  # Linux目录路径
   allowed-directories: /public,/discuz  # 允许访问的目录列表（逗号分隔）
@@ -49,9 +62,7 @@ mail:
   #模板位置 templates/email.html
   templatePath: email
   subject: "农村金融开发环境异常警告"
-server:
-  port: 8080
-  address: 0.0.0.0
+
 #mybatis-plus配置 开发、测试环境打印sql语句
 mybatis-plus:
   configuration:

@@ -48,10 +48,10 @@ public class SecurityConfig {
         http
                 .authenticationProvider(authenticationProvider()) // 关键：设置认证提供者
                 .csrf(csrf -> csrf
-                         .ignoringRequestMatchers("/api/**")
+                         .ignoringRequestMatchers("/api/**","/OA/**")
                 )
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/images/**","/jqueryIp/**","/register","/files/public/**","/error").permitAll()
+                        .requestMatchers("/images/**","/leave/**","/jqueryIp/**","/api/**","/register","/files/public/**","/error").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()

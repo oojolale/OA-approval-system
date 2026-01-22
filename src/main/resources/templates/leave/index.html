@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+	<style>
+		.approvalTask{
+			cursor:pointer;
+		}
+		.approvalTask:hover{
+			color: blue;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<textarea name="申请原因" id="comment" cols="30" rows="10"></textarea>
+	</div>
+	<div>
+		<button onclick="leave()" style="width:200px;color: #fff;background-color: #0d6efd;border-color: #0d6efd;">请假</button>
+	</div>
+	查询业务状态 <input id="procIns" type="text" onchange="changeTxt(this.value)"/>
+	<div>
+		<button onclick="getByProc()" style="width:200px;color: #fff;background-color: #0d6efd;border-color: #0d6efd;">查询</button>
+	</div>
+	<div>
+		<button onclick="viewTasks()" style="width:200px;color: #fff;background-color: #0d6efd;border-color: #0d6efd;">查询经理待办</button>
+	</div>
+	<div>
+		<div id="taskList"></div>
+	</div>
+</body>
+<script>
+	let procInsId = ""
+    function leave() {
+		const url = `/OA/leave/start`;
+		fetch(url, {
+				method: 'POST', // 指定请求方法
+				// options:{},
+				headers: {
+					'Content-Type': 'application/json'
+					// 'Authorization': 'Bearer your-token'
+				},
+				body: JSON.stringify({"applicantId":10001,"days":3,"reason":document.querySelector("#comment").value})
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				return response.text();
+			})
+			.then(result => {
+				console.log(result, "result")
+				// if (result.code === 200) {
+					
+				// }
+				return result;
+			})
+			.catch(error => {
+				throw error;
+			});
+	}
+	function getByProc() {
+		const url = `/OA/leave/by-proc/${procInsId}`;
+		fetch(url, {
+				method: 'GET',
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				return response.text();
+			})
+			.then(result => {
+				console.log(result, "result")
+				// if (result.code === 200) {
+					
+				// }
+				return result;
+			})
+			.catch(error => {
+				throw error;
+			});
+	}
+	function changeTxt(txt){
+		procInsId = txt
+	}
+	function approvalTask(task){
+		let comment = ""
+		const url = `/OA/tasks/complete`;
+		fetch(url, {
+				method: 'POST', // 指定请求方法
+				// options:{},
+				headers: {
+					'Content-Type': 'application/json'
+					// 'Authorization': 'Bearer your-token'
+				},
+				body: JSON.stringify({"taskId":task.innerText,"approver":"manager1","comment":comment})
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				return response.text();
+			})
+			.then(result => {
+				console.log(result, "result")
+				// if (result.code === 200) {
+					
+				// }
+				return result;
+			})
+			.catch(error => {
+				throw error;
+			});
+	}
+	function viewTasks(){
+		const url = `/OA/tasks/todo?assignee=manager1`;
+		fetch(url, {
+				method: 'GET',
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				return response.text();
+			})
+			.then(result => {
+				console.log(result, "result")
+				let response = JSON.parse(result)
+				let taskList = response.data
+				let node = ""
+				taskList.forEach(item=>{
+					node += `<div>
+						<div><span>assignee:</span><span>${item.assignee}</span></div>
+						<div><span>name:</span><span>${item.name}</span></div>
+						<div><span>procInsId:</span><span>${item.procInsId}</span></div>
+						<div class="approvalTask"><span>taskId:</span><span onclick="approvalTask(this)">${item.taskId}</span></div>
+					</div>`
+				})
+				document.querySelector("#taskList").innerHTML = node
+				
+				return result;
+			})
+			.catch(error => {
+				throw error;
+			});
+	}
+</script>
+</html>
