@@ -61,4 +61,19 @@ public class CurrentUserService {
         }
         return null;
     }
+
+    public String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if( ObjectUtil.isNotEmpty(authentication) && authentication.isAuthenticated()) {
+            WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
+            String sessionId = details.getSessionId();
+            if(ObjectUtil.isNotEmpty(sessionId) && ObjectUtil.isNotEmpty(SecurityContextHolder.getContext())){
+                //通过UserDetailsService 加载用户加载用户
+                org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+                System.out.println("尝试加载用户: " + principal.getUsername());
+                return principal.getUsername();
+            }
+        }
+        return null;
+    }
 }

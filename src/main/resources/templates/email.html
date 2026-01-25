@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>邮件通知</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .email-container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+            margin: -20px -20px 20px -20px;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .info-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .info-table td:first-child {
+            font-weight: bold;
+            width: 120px;
+            color: #333;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1 th:text="${subject}">邮件通知</h1>
+        </div>
+        
+        <div class="content">
+            <p>您好！</p>
+            
+            <div class="highlight">
+                <strong>类型：</strong><span th:text="${type}"></span><br/>
+                <strong>提示：</strong><span th:text="${prompt}"></span>
+            </div>
+            
+            <table class="info-table">
+                <tr>
+                    <td>用户名称：</td>
+                    <td th:text="${username}">用户</td>
+                </tr>
+                <tr th:if="${email}">
+                    <td>邮箱地址：</td>
+                    <td th:text="${email}">email@example.com</td>
+                </tr>
+                <tr th:if="${companyName}">
+                    <td>企业名称：</td>
+                    <td th:text="${companyName}">企业</td>
+                </tr>
+                <tr th:if="${companyType}">
+                    <td>企业类型：</td>
+                    <td th:text="${companyType}">类型</td>
+                </tr>
+                <tr>
+                    <td>发送时间：</td>
+                    <td th:text="${currentDate}">2024-01-01 00:00:00</td>
+                </tr>
+                <tr th:if="${count > 0}">
+                    <td>邮件数量：</td>
+                    <td th:text="${count}">1</td>
+                </tr>
+            </table>
+            
+            <div th:if="${info}" style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+                <strong>详细信息：</strong>
+                <pre th:text="${info}" style="white-space: pre-wrap; word-wrap: break-word; margin-top: 10px;"></pre>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>此邮件由OA审批系统自动发送，请勿直接回复。</p>
+            <p>&copy; 2024 OA审批系统. All Rights Reserved.</p>
+            <a href="http://www.baidu.com" style="color: #4CAF50; text-decoration: none;">访问系统网站了解更多信息</a>
+        </div>
+    </div>
+</body>
+</html>

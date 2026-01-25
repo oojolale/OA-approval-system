@@ -32,20 +32,22 @@ spring:
       enabled: true
   # 邮件发送方
   mail:
-    host: smtp.exmail.qq.com
-    port: 587
+    host: smtp.qq.com
+    port: 465
     username: 3942607275@qq.com
-    password: "di7219212"
+    password: bopwzopprftnccag # 授权码获取参考项目下/授权码获取1.png、授权码获取2.png 新版本邮箱要从侧边栏-账号-账号与安全-安全设置 进入 POP3/IMAP/SMTP/Exchange/CardDAV 服务 开启
     protocol: smtp
     default-encoding: UTF-8
     properties:
-      mail-smtp-host: smtp.exmail.qq.com
-      mail-smtp-auth: true
-      mail-smtp-ssl-enable: true
-      mail-smtp-socketFactory-class: com.sun.mail.util.MailSSLSocketFactory
-      mail-smtp-socketFactory-port: 587
-      mail-smtp-socketFactory-fallback: false
-      mail-transport-protocol: smtp
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+          debug: true
 
 flowable:
   database-schema-update: true
@@ -57,11 +59,11 @@ file:
 
 # 邮件接收方
 mail:
-  to:  3942607275@qq.com
+  to:  3942607275@qq.com,572233016@qq.com
   replyTo: 572233016@qq.com
   #模板位置 templates/email.html
   templatePath: email
-  subject: "农村金融开发环境异常警告"
+  subject: "OA审批系统异常警告"
 
 #mybatis-plus配置 开发、测试环境打印sql语句
 mybatis-plus:
