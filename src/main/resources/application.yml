@@ -59,8 +59,8 @@ file:
 
 # 邮件接收方
 mail:
-  to:  3942607275@qq.com,572233016@qq.com
-  replyTo: 572233016@qq.com
+  to:  3942607275@qq.com,572233016@qq.com,2539627785@qq.com
+  replyTo: 2539627785@qq.com
   #模板位置 templates/email.html
   templatePath: email
   subject: "OA审批系统异常警告"
