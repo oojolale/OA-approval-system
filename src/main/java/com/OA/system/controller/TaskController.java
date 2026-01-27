@@ -2,6 +2,9 @@ package com.OA.system.controller;
 
 import com.OA.system.dto.ApiResponse;
 import com.OA.system.dto.CompleteTaskRequest;
+import com.OA.system.entity.LeaveApply;
+import com.OA.system.repository.LeaveApplyRepository;
+import com.OA.system.service.LeaveService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.flowable.engine.HistoryService;
@@ -11,6 +14,7 @@ import org.flowable.task.api.Task;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -19,8 +23,10 @@ import java.util.stream.Collectors;
 public class TaskController {
 
     private final TaskService taskService;
+    private final LeaveService leaveService;
     private final RuntimeService runtimeService;
     private final HistoryService historyService;
+    private final LeaveApplyRepository leaveApplyRepository;
 
     /*查询经理待办*/
     @GetMapping("/todo")
@@ -46,6 +52,11 @@ public class TaskController {
             taskService.addComment(req.getTaskId(), task.getProcessInstanceId(), req.getComment());
         }
         taskService.complete(req.getTaskId());
+        Optional<LeaveApply> opt = leaveApplyRepository.findByProcessInstanceId(req.getProcInsId());
+        opt.ifPresent(leaveApply -> {
+            leaveApply.setStatus("FINISHED");
+            boolean b = leaveService.updateById(leaveApply);
+        });
         return ApiResponse.ok("completed");
     }
 

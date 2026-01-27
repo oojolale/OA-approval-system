@@ -1,9 +1,15 @@
 package com.OA.system.service.impl;
 
+import com.OA.system.dto.CompleteTaskRequest;
 import com.OA.system.entity.LeaveApply;
 import com.OA.system.dto.StartLeaveRequest;
+import com.OA.system.entity.LocationRequest;
+import com.OA.system.mapper.LeaveApplyMapper;
+import com.OA.system.mapper.LocationRequestMapper;
 import com.OA.system.repository.LeaveApplyRepository;
 import com.OA.system.service.LeaveService;
+import com.OA.system.service.LocationRequestService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
@@ -14,15 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class LeaveServiceImpl implements LeaveService {
+public class LeaveServiceImpl extends ServiceImpl<LeaveApplyMapper, LeaveApply> implements LeaveService {
 
     private final RuntimeService runtimeService;
     private final TaskService taskService;
     private final HistoryService historyService;
     private final LeaveApplyRepository leaveApplyRepository;
+    private final LeaveApplyMapper leaveApplyMapper;
 
     @Override
     @Transactional

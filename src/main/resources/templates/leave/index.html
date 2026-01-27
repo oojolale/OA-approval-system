@@ -5,29 +5,69 @@
     <title>Title</title>
 	<style>
 		.approvalTask{
-			cursor:pointer;
+			padding: 0 0 25px 0;
 		}
-		.approvalTask:hover{
-			color: blue;
+		.completeComment{
+			transform: translateY(25px);
+		}
+		#tipSuccess{
+			display:none
+		}
+		#tipError{
+			display:none
+		}
+		#tipSendSuccess{
+			display:none
+		}
+		#tipTask{
+			display:none
+		}
+		#tipSendError{
+			display:none
+		}
+		#approvalList{
+			display:none;
+			padding: 10px;
+			box-sizing: content-box;
+		}
+		.taskBlock:not(:last-of-type){
+			 border-bottom:1px solid
+		}
+		button.primary{
+			cursor: pointer;
+			width: 100px;
+			margin: 5px 0;
 		}
 	</style>
 </head>
 <body>
-	<div>
-		<textarea name="申请原因" id="comment" cols="30" rows="10"></textarea>
+	<div style="position: fixed;right: 0;top: 0;bottom: 0;margin: auto;font-size: 18px;font-weight: bold;padding-right: 50px;">
+		<div style="color: green;" id="tipSuccess">审批成功！</div>
+		<div style="color: green;" id="tipError">审批异常！</div>
+		<div style="color: green;" id="tipTask">无代办事项！</div>
+		<div style="color: green;" id="tipSendSuccess">请假成功！</div>
+		<div style="color: green;" id="tipSendError">请假异常！</div>
 	</div>
-	<div>
-		<button onclick="leave()" style="width:200px;color: #fff;background-color: #0d6efd;border-color: #0d6efd;">请假</button>
-	</div>
-	查询业务状态 <input id="procIns" type="text" onchange="changeTxt(this.value)"/>
-	<div>
-		<button onclick="getByProc()" style="width:200px;color: #fff;background-color: #0d6efd;border-color: #0d6efd;">查询</button>
-	</div>
-	<div>
-		<button onclick="viewTasks()" style="width:200px;color: #fff;background-color: #0d6efd;border-color: #0d6efd;">查询经理待办</button>
-	</div>
-	<div>
-		<div id="taskList"></div>
+	<div style="text-align: left;padding:0 20px;position: relative;">
+		<div>
+			<textarea name="申请原因" placeholder="请输入申请原因" id="comment" cols="30" rows="10"></textarea>
+		</div>
+		<div>
+			<button class="primary" onclick="leave()" style="width:200px;color: #fff;background-color: #0d6efd;border-color: #0d6efd;">发起请假</button>
+		</div>
+		<div>
+			<span>查询业务状态</span>
+			<input id="procIns" placeholder="请输入processInstanceId" type="text" onchange="changeTxt(this.value)"/>
+			<button class="primary" onclick="getByProc()" style="width:200px;color: #fff;background-color: #0d6efd;border-color: #0d6efd;">查询</button>
+		</div>
+		<div id="procInsStatus">
+			
+		</div>
+		<button class="primary" onclick="viewTasks()" style="width:200px;color: #fff;background-color: #0d6efd;border-color: #0d6efd;">查询经理待办</button>
+		<div id="approvalList" style="position: relative;border: 1px solid #0d6efd;">
+			<div style="color: #fff;background-color: #ff5500;line-height: 20px;width: 150px;padding:5px">待审批事项</div>
+			<div id="taskList"></div>
+		</div>
 	</div>
 </body>
 <script>
@@ -51,9 +91,17 @@
 			})
 			.then(result => {
 				console.log(result, "result")
-				// if (result.code === 200) {
-					
-				// }
+				let response = JSON.parse(result)
+				if (response && response.message === "OK") {
+					document.querySelector("#tipSendSuccess").style.display='block'
+				}
+				else{
+					document.querySelector("#tipSendError").style.display='block'
+				}
+				setTimeout(()=>{
+					document.querySelector("#tipSendSuccess").style.display='none'
+					document.querySelector("#tipSendError").style.display='none'
+				},2500)
 				return result;
 			})
 			.catch(error => {
@@ -73,9 +121,17 @@
 			})
 			.then(result => {
 				console.log(result, "result")
-				// if (result.code === 200) {
-					
-				// }
+				let response = JSON.parse(result)
+				let data = response.data
+				let node = `<div>
+					<div><span>请假天数:</span><span>${data.days}</span></div>
+					<div><span>请假事由:</span><span>${data.reason}</span></div>
+					<div><span>当前状态:</span><span>${data.status}</span></div>
+					<div><span>申请时间:</span><span>${new Date(data.createTime).toLocaleString()}</span></div>
+					<div><span>processInstanceId:</span><span>${data.processInstanceId}</span></div>
+					<div><span>applicantId:</span><span>${data.applicantId}</span></div>
+				</div>`
+				document.querySelector("#procInsStatus").innerHTML = node
 				return result;
 			})
 			.catch(error => {
@@ -85,8 +141,8 @@
 	function changeTxt(txt){
 		procInsId = txt
 	}
-	function approvalTask(task){
-		let comment = ""
+	function approvalTask(task,index){
+		let comment = document.querySelector(`#textarea${index}`).value
 		const url = `/OA/tasks/complete`;
 		fetch(url, {
 				method: 'POST', // 指定请求方法
@@ -95,7 +151,7 @@
 					'Content-Type': 'application/json'
 					// 'Authorization': 'Bearer your-token'
 				},
-				body: JSON.stringify({"taskId":task.innerText,"approver":"manager1","comment":comment})
+				body: JSON.stringify({"taskId":task.attributes[1].value,"approver":"manager1",comment,procInsId:task.attributes[2].value})
 			})
 			.then(response => {
 				if (!response.ok) {
@@ -105,9 +161,18 @@
 			})
 			.then(result => {
 				console.log(result, "result")
-				// if (result.code === 200) {
-					
-				// }
+				let response = JSON.parse(result)
+				viewTasks()
+				if (response && response.message === "OK") {
+					document.querySelector("#tipSuccess").style.display='block'
+				}
+				else{
+					document.querySelector("#tipError").style.display='block'
+				}
+				setTimeout(()=>{
+					document.querySelector("#tipSuccess").style.display='none'
+					document.querySelector("#tipError").style.display='none'
+				},2500)
 				return result;
 			})
 			.catch(error => {
@@ -129,17 +194,31 @@
 				console.log(result, "result")
 				let response = JSON.parse(result)
 				let taskList = response.data
+				if(taskList.length===0){
+					document.querySelector("#tipTask").style.display = 'block'
+					setTimeout(()=>{
+						document.querySelector("#tipTask").style.display='none'
+					},2500)
+				}
 				let node = ""
-				taskList.forEach(item=>{
-					node += `<div>
+				taskList.forEach((item,index)=>{
+					node += `<div class="taskBlock">
 						<div><span>assignee:</span><span>${item.assignee}</span></div>
 						<div><span>name:</span><span>${item.name}</span></div>
 						<div><span>procInsId:</span><span>${item.procInsId}</span></div>
-						<div class="approvalTask"><span>taskId:</span><span onclick="approvalTask(this)">${item.taskId}</span></div>
+						<div class="approvalTask"><span>taskId:</span><span>${item.taskId}</span>
+						<textarea class="completeComment" id="textarea${index}" name="审批意见" placeholder="审批意见" style="width:200px;height:40px" cols="30" rows="10"></textarea>
+						<button onclick='approvalTask(this,${index})' task="${item.taskId}" procInsId="${item.procInsId}">同意</button>
+						</div>
 					</div>`
 				})
 				document.querySelector("#taskList").innerHTML = node
-				
+				if(node){
+					document.querySelector("#approvalList").style.display = 'block'
+				}
+				else{
+					document.querySelector("#approvalList").style.display = 'none'
+				}
 				return result;
 			})
 			.catch(error => {
